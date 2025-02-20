@@ -1,0 +1,42 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background:linear-gradient(to top,rgba(0,0,0,0.5)50%,rgba(0,0,0,0.5)50%),url('images/backviewM4.jpg');
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+.container {
+    width: 70%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: transparent; /* Set background color to transparent */
+}
+h1 {
+    color: antiquewhite;
+    border-bottom: 2px solid #007BFF;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+.contact-info {
+    background: transparent;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.contact-info p {
+    line-height: 1.8;
+    margin-bottom: 15px;
+    color:antiquewhite;
+}
+.about-info strong {
+    color: #007BFF;
+}
+.contact-info a {
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.about-info a:hover {
+    color: #0056b3;
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoServPro - Services</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='services_style.css') }}">
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar">
+        <div class="nav-logo">
+           <a href="{{ url_for('landing_page') }}"><img src="{{ url_for('static', filename='images/white_logo.png') }}"  width="150" height="auto"></a>
+        </div>
+        <ul class="nav-links">
+            <li><a href="{{ url_for('login') }}">Login</a></li>
+            <li><a href="{{ url_for('register') }}">Register</a></li>
+            <li><a href="{{ url_for('services') }}">Services</a></li>
+            <li><a href="{{ url_for('about') }}">About Us</a></li>
+            <li><a href="{{ url_for('contact') }}">Contact Us</a></li>
+        </ul>
+    </nav>
+
+ <!--Main Content-->
+  <main>
+        <h2>Our Services</h2>
+        <div class="services">
+            <div class="service">
+                <h3>Oil Change</h3>
+                <div class="service-description">
+                    <p>Get your oil changed by our expert technicians.</p>
+                    <a href="{{ url_for('login') }}" class="btn">Book Now</a>
+                </div>
+            </div>
+            <div class="service">
+                <h3>Tire Rotation</h3>
+                <div class="service-description">
+                    <p>Keep your tires in good condition with our tire rotation service.</p>
+                    <a href="{{ url_for('login') }}" class="btn">Book Now</a>
+                </div>
+            </div>
+            <div class="service">
+                <h3>Brake Repair</h3>
+                <div class="service-description">
+                    <p>Get your brakes repaired by our expert technicians.</p>
+                    <a href="{{ url_for('login') }}" class="btn">Book Now</a>
+                </div>
+            </div>
+           <div class="services">
+  <div class="service">
+    <h3>Wiper Blades Replacement</h3>
+    <div class="service-description">
+      <p>Wiper blades should be replaced every six to twelve months to ensure clear visibility during rainy or snowy conditions.</p>
+      <a href="{{ url_for('login') }}" class="btn">Book Now</a>
+    </div>
+  </div>
+  <div class="service">
+    <h3>Air Filter Replacement</h3>
+    <div class="service-description">
+      <p>Replacing your vehicle's air filter regularly can improve fuel efficiency and engine performance.</p>
+      <a href="{{ url_for('login') }}" class="btn">Book Now</a>
+    </div>
+  </div>
+  <div class="service">
+    <h3>Scheduled Maintenance</h3>
+    <div class="service-description">
+      <p>Regular maintenance checks can help identify potential issues before they become major problems, saving you time and money.</p>
+      <a href="{{ url_for('login') }}" class="btn">Book Now</a>
+    </div>
+  </div>
+  <div class="service">
+    <h3>Battery Replacement</h3>
+    <div class="service-description">
+      <p>A faulty battery can cause various issues, from difficulty starting your vehicle to electrical problems. Replacing it can prevent these issues.</p>
+      <a href="{{ url_for('login') }}" class="btn">Book Now</a>
+    </div>
+  </div>
+</div>
+  </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 AutoServPro. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
