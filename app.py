@@ -1,4 +1,5 @@
-from flask import Flask, SQL, redirect, render_template, request, session
+from cs50 import SQL
+from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
@@ -12,7 +13,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure PostgreSQL database
-db = SQL("postgresql://username:password@localhost/autoservpro")# Not Made Yet
+db = SQL("postgresql://postgres:postgres@localhost:5432/autoservpro")
 
 
 @app.route('/')
@@ -32,6 +33,11 @@ def about():
 def contact():
     return render_template('contact.html')
 
+
+@app.route('/home')# Incomplete
+def home():
+    return render_template('home.html')
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
@@ -49,12 +55,12 @@ def login():
         elif not request.form.get("password"):
             return apology("must provide password", 403)
 
-        # Query database for username
+        # Query database for owner
         rows = db.execute(
-            "SELECT * FROM users WHERE email = ?", request.form.get("email")
+            "SELECT * FROM owner WHERE email = ?", request.form.get("email")
         )
 
-        # Ensure username exists and password is correct
+        # Ensure email exists and password is correct
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], request.form.get("password")
         ):
@@ -64,7 +70,7 @@ def login():
         session["owner_id"] = rows[0]["id"]
 
         # Redirect user to home page
-        return redirect("/")
+        return redirect("/home")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
@@ -107,11 +113,11 @@ def register():
             return apology("passwords don't match", 400)
 
         # Try executing query if username does not exist
-        #try:
-        #    db.execute("INSERT INTO users (email, hash) VALUES (?, ?)", email, gen_pass)
-        #    return redirect("/login")
-        #except ValueError:
-        #    return apology("email already exists", 400)
+        try:
+            db.execute("INSERT INTO users (email, hash) VALUES (?, ?)", email, gen_pass)
+            return redirect("/home")
+        except ValueError:
+            return apology("email already exists", 400)
     else:
         return render_template("register.html")
 

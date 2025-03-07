@@ -15,4 +15,19 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// }
+
+	"Flask AutoServPro: template extending layout.html": {
+    "prefix": "mainlayout",
+    "body": [
+        "{% extends \"layout.html\" %}",
+        "{% block title %}",
+        "$0",
+        "{% endblock %}",
+        "{% block content %}",
+        "{% endblock %}"
+    ],
+
+    "description": "Main template that extends layout.html"
+},
+
 }
