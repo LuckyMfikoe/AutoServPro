@@ -15,6 +15,14 @@ Session(app)
 # Configure PostgreSQL database
 db = SQL("postgresql://postgres:postgres@localhost:5432/autoservpro")
 
+@app.after_request
+def after_request(response):
+    """Ensure responses aren't cached"""
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Expires"] = 0
+    response.headers["Pragma"] = "no-cache"
+    return response
+
 
 @app.route('/')
 @app.route('/landing_page')
@@ -33,10 +41,6 @@ def about():
 def contact():
     return render_template('contact.html')
 
-
-@app.route('/home')# Incomplete
-def home():
-    return render_template('home.html')
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -120,6 +124,33 @@ def register():
             return apology("email already exists", 400)
     else:
         return render_template("register.html")
+
+@app.route("/home")
+@login_required
+def home():
+    """Show owner information"""
+     # Get owner's information from database
+    owner_query = db.execute("select firstname, lastname, address, email, phone from owner where id = ?", session["owner_id"])
+    firstname = owner_query[0]
+    lastname = owner_query[1]
+    address = owner_query[2]
+    email = owner_query[3]
+    phone = owner_query[4]
+    return render_template("home.html", firstname=firstname, lastname=lastname, address=address, email=email, phone=phone)
+
+@login_required
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if request.method == "POST":
+        firstname = request.form.get("firstname")
+        lastname = request.form.get("lastname")
+        address = request.form.get("address")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        db.execute("UPDATE owner SET firstname = ?, lastname = ?, address = ?, email = ?, phone = ? WHERE id = ?", firstname, lastname, address, email, phone, session["owner_id"])
+        return redirect("/home")
+    else:
+        return render_template("profile.html")
 
 
 if __name__ == '__main__':
