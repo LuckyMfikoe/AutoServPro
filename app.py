@@ -25,9 +25,8 @@ def after_request(response):
 
 
 @app.route('/')
-@app.route('/landing_page')
 def landing_page():
-    return render_template('landing_page.html')
+    return render_template('index.html')
 
 @app.route('/services')
 def services():
@@ -125,7 +124,7 @@ def register():
     else:
         return render_template("register.html")
 
-@app.route("/home")
+@app.route("/home") # Displays owner information
 @login_required
 def home():
     """Show owner information"""
@@ -139,8 +138,16 @@ def home():
     return render_template("home.html", firstname=firstname, lastname=lastname, address=address, email=email, phone=phone)
 
 @login_required
-@app.route("/profile", methods=["GET", "POST"])
-def profile():
+@app.route("/owner_cars") # Displays owner's cars -> Incomplete
+def owner_cars():
+    return render_template("owner_cars.html")
+
+
+# Update Functions
+@login_required
+@app.route("/update_profile", methods=["GET", "POST"]) # Updates Owner Information
+def update_profile():
+    """Update owner information"""
     if request.method == "POST":
         firstname = request.form.get("firstname")
         lastname = request.form.get("lastname")
@@ -150,8 +157,22 @@ def profile():
         db.execute("UPDATE owner SET firstname = ?, lastname = ?, address = ?, email = ?, phone = ? WHERE id = ?", firstname, lastname, address, email, phone, session["owner_id"])
         return redirect("/home")
     else:
-        return render_template("profile.html")
+        return render_template("update_profile.html")
 
+@login_required
+@app.route("/update_car", methods=["GET", "POST"]) # Updates Car Information -> Incomplete
+def update_car():
+    """Update owner information"""
+    if request.method == "POST":
+        #firstname = request.form.get("firstname")
+        #lastname = request.form.get("lastname")
+        #address = request.form.get("address")
+        #email = request.form.get("email")
+        #phone = request.form.get("phone")
+        #db.execute("UPDATE owner SET firstname = ?, lastname = ?, address = ?, email = ?, phone = ? WHERE id = ?", firstname, lastname, address, email, phone, session["owner_id"])
+        return redirect("/home")
+    else:
+        return render_template("update_car.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
