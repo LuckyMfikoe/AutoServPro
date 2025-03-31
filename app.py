@@ -3,6 +3,7 @@ from flask import Flask, redirect, render_template, request, session
 from flask_session import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
+
 from helpers import apology, login_required
 
 app = Flask(__name__)
@@ -13,7 +14,7 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure PostgreSQL database
-db = SQL("postgresql://postgres:postgres@localhost:5432/autoservpro")
+db = SQL("sqlite:///autoservpro.db")
 
 @app.after_request
 def after_request(response):
@@ -25,6 +26,7 @@ def after_request(response):
 
 
 @app.route('/')
+@app.route('/landing_page')
 def landing_page():
     return render_template('index.html')
 
@@ -40,7 +42,7 @@ def about():
 def contact():
     return render_template('contact.html')
 
-
+@login_required
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Log user in"""
@@ -65,12 +67,12 @@ def login():
 
         # Ensure email exists and password is correct
         if len(rows) != 1 or not check_password_hash(
-            rows[0]["hash"], request.form.get("password")
+            rows[0]["password"], request.form.get("password")
         ):
             return apology("invalid email and/or password", 403)
 
         # Remember which user has logged in
-        session["owner_id"] = rows[0]["id"]
+        session["owner_id"] = rows[0]["owner_id"]
 
         # Redirect user to home page
         return redirect("/home")
@@ -89,72 +91,103 @@ def logout():
     # Redirect user to login form
     return redirect("/")
 
-@app.route("/register", methods=["GET", "POST"])# Incomplete
+@app.route("/register", methods=["GET", "POST"])
 def register():
     """Register user"""
     # Forget any user_id (just in case)
     session.clear()
 
     if request.method == "POST":
+        # Retrieve form data
+        firstname = request.form.get("firstname")
+        lastName = request.form.get("lastname")
+        address = request.form.get("address")
         email = request.form.get("email")
+        phoneNumber = request.form.get("phone")
         password = request.form.get("password")
-        confirmation = request.form.get("confirmation")
+        confirmation = request.form.get("confirm_password")
+        car_vin_num = request.form.get("vin")
+        make = request.form.get("make")
+        licensePlate = request.form.get("license_plate")
+        model = request.form.get("model")
+        color = request.form.get("color")
+        yearModel = request.form.get("year")
 
-        # If any are blank
-        if not email:
-            return apology("must provide email", 400)
-        elif not password:
-            return apology("must provide password", 400)
-        elif not confirmation:
-            return apology("must provide confirmation password", 400)
+        # Validate inputs
+        if not all([firstname, lastName, address, email, phoneNumber, password, confirmation, car_vin_num, make, licensePlate, model, color, yearModel]):
+            return apology("All fields must be filled", 400)
 
         # Check if passwords match
-        if password == confirmation:
-            # Generate hash if true
-            gen_pass = generate_password_hash(password)
-        else:
-            return apology("passwords don't match", 400)
+        if password != confirmation:
+            return apology("Passwords don't match", 400)
 
-        # Try executing query if username does not exist
+        # Generate hash for password
+        gen_pass = generate_password_hash(password)
+
+        # Try inserting user data into database
         try:
-            db.execute("INSERT INTO users (email, hash) VALUES (?, ?)", email, gen_pass)
+            owner_id = db.execute(
+                """
+                INSERT INTO owner (firstname, lastName, address, email, phoneNumber, password, user_type)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, 
+                firstname, lastName, address, email, phoneNumber, gen_pass, "client"
+            )
+            
+            # Insert car details associated with the user
+            db.execute(
+                """
+                INSERT INTO car (owner_id, car_vin_num, make, licensePlate, model, color, yearModel)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, 
+                owner_id, car_vin_num, make, licensePlate, model, color, yearModel
+            )
+            
             return redirect("/home")
         except ValueError:
-            return apology("email already exists", 400)
+            return apology("Email already exists", 400)
+    
     else:
         return render_template("register.html")
 
-@app.route("/home") # Displays owner information
+
+# Display Functions
 @login_required
+@app.route("/home") # Displays owner information
 def home():
     """Show owner information"""
      # Get owner's information from database
-    owner_query = db.execute("select firstname, lastname, address, email, phone from owner where id = ?", session["owner_id"])
-    firstname = owner_query[0]
-    lastname = owner_query[1]
-    address = owner_query[2]
-    email = owner_query[3]
-    phone = owner_query[4]
+    owner_query = db.execute("select firstname, lastName, address, email, phoneNumber from owner where owner_id = ?", session["owner_id"])
+    firstname = owner_query[0]["firstname"]
+    lastname = owner_query[0]["lastName"]
+    address = owner_query[0]["address"]
+    email = owner_query[0]["email"]
+    phone = owner_query[0]["phoneNumber"]
     return render_template("home.html", firstname=firstname, lastname=lastname, address=address, email=email, phone=phone)
 
+@app.route("/owner_cars") # Displays owner's cars -> Empty!!!
 @login_required
-@app.route("/owner_cars") # Displays owner's cars -> Incomplete
 def owner_cars():
     return render_template("owner_cars.html")
+
+@app.route("/car_services") # Displays owner's services -> Empty!!!
+@login_required
+def car_services():
+    return render_template("car_services.html")
 
 
 # Update Functions
 @login_required
-@app.route("/update_profile", methods=["GET", "POST"]) # Updates Owner Information
+@app.route("/update_profile", methods=["GET", "POST"]) # Updates Owner Information -> Incomplete
 def update_profile():
     """Update owner information"""
     if request.method == "POST":
         firstname = request.form.get("firstname")
-        lastname = request.form.get("lastname")
+        lastName = request.form.get("lastname")
         address = request.form.get("address")
         email = request.form.get("email")
-        phone = request.form.get("phone")
-        db.execute("UPDATE owner SET firstname = ?, lastname = ?, address = ?, email = ?, phone = ? WHERE id = ?", firstname, lastname, address, email, phone, session["owner_id"])
+        phoneNumber = request.form.get("phone")
+        db.execute("UPDATE owner SET firstname = ?, lastName = ?, address = ?, email = ?, phoneNumber = ? WHERE id = ?", firstname, lastName, address, email, phoneNumber, session["owner_id"])
         return redirect("/home")
     else:
         return render_template("update_profile.html")

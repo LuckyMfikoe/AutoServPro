@@ -19,14 +19,18 @@
 
     <body>
 
-        <nav class="bg-light border navbar navbar-expand-md navbar-light">
+        <nav class="bg-dark border navbar navbar-expand-md navbar-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="/home"><span class="red">AutoServPro</span></a>
+                {% if session["owner_id"] %}
+                    <a class="navbar-brand" href="/home"><img src="/static/images/white_logo.png" width="150" height="auto"></a>
+                {% else %}
+                    <a class="navbar-brand" href="/landing_page"><img src="/static/images/white_logo.png" width="150" height="auto"></a>
+                {% endif %}
                 <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-bs-target="#navbar" data-bs-toggle="collapse" type="button">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbar">
-                    {% if session["user_id"] %}
+                    {% if session["owner_id"] %}
                         <ul class="navbar-nav me-auto mt-2">
                             <li class="nav-item"><a class="nav-link" href="/owner_cars">Your Cars</a></li>
                             <li class="nav-item"><a class="nav-link" href="/car_services">Your Services</a></li>
