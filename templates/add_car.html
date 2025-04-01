@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}
+
+{% endblock %}
+{% block main %}
+<form class="container col-5 justify-content-center" action="/add_car" method="POST">
+    <div class="col mt-2">
+        <label for="vin" class="form-label">VIN Number</label>
+        <input type="text" class="form-control" id="vin" name="vin" required>
+    </div>
+    <div class="col mt-2">
+        <label for="make" class="form-label">Make</label>
+        <input type="text" class="form-control" id="make" name="make" required>
+    </div>
+    <div class="col mt-2">
+        <label for="license_plate" class="form-label">License Plate</label>
+        <input type="text" class="form-control" id="license_plate" name="license_plate" required>
+    </div>
+    <div class="col mt-2">
+        <label for="model" class="form-label">Model</label>
+        <input type="text" class="form-control" id="model" name="model" required>
+    </div>
+    <div class="col mt-2">
+        <label for="color" class="form-label">Color</label>
+        <input type="text" class="form-control" id="color" name="color" required>
+    </div>
+    <div class="col mt-2">
+        <label for="year" class="form-label">Year Bought</label>
+        <input type="text" class="form-control" id="year" name="year" required>
+    </div>
+    <br>
+    <button class="btn btn-primary" type="submit">Save</button>
+</form>
+{% endblock %}

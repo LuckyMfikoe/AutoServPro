@@ -1,98 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Page</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='landing_page_style.css') }}"/>
-    <link rel="stylesheet" type="text/css" href="/static/register_style.css"/>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        legend, h1 {
-            color: white;
-        }
-    </style>
-</head>
-<body>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="/landing_page"><img src="/static/images/white_logo.png" width="150" height="auto"></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-                <li class="nav-item"><a class="nav-link" href="/services">Services</a></li>
-                <li class="nav-item"><a class="nav-link" href="/about">About Us</a></li>
-                <li class="nav-item"><a class="nav-link" href="/contact">Contact Us</a></li>
-            </ul>
+{% extends "layout.html" %}
+{% block title %}
+    Register
+{% endblock %}
+{% block main %}
+<h1 class="text-center">Register</h1>
+<br>
+<form class="container col-5 justify-content-center" action="/register" method="POST">
+    <h5 class="text-muted">Personal Information</h5>
+    <div class="row">
+        <div class="col-md-6">
+            <label for="firstname" class="form-label">First Name</label>
+            <input type="text" class="form-control" id="firstname" name="firstname" required>
         </div>
-    </nav>
-</header>
-
-<div class="container" id="container">
-    <h1 class="text-center">Create Account</h1>
-    <form name="form" action="/register" method="POST">
-        <div id="form-wrapper">
-            <fieldset>
-                <legend>Personal Information</legend>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First Name" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last Name" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="address" name="address" placeholder="Address" required>
-                </div>
-                <div class="form-group">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
-                </div>
-                <div class="form-group">
-                    <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number (Optional)">
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmation" placeholder="Confirm Password" required>
-                </div>
-            </fieldset>
-
-            <fieldset>
-                <legend>Vehicle Information</legend>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="carVinNumber" name="carVinNumber" placeholder="VIN Number" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="make" name="make" placeholder="Make" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="licensePlate" name="licensePlate" placeholder="License Plate" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="carModel" name="carModel" placeholder="Model" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="color" name="color" placeholder="Color" required>
-                </div>
-                <div class="form-group">
-                    <input type="number" class="form-control" id="yearBought" name="yearBought" placeholder="Year Bought" required>
-                </div>
-            </fieldset>
+        <div class="col-md-6">
+            <label for="lastname" class="form-label">Last Name</label>
+            <input type="text" class="form-control" id="lastname" name="lastname" required>
         </div>
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
-    <p class="mt-3">Already have an account? <a href="/login">Sign In</a></p>
-</div>
-
-<footer class="footer bg-dark text-white text-center py-3">
-    <p>&copy; 2025 AutoServPro. All rights reserved.</p>
-</footer>
-
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+    </div>
+    <div class="col mt-2">
+        <label for="address" class="form-label">Address</label>
+        <input type="text" class="form-control" id="address" name="address" required>
+    </div>
+    <div class="col mt-2">
+        <label for="email" class="form-label">Email</label>
+        <input type="text" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="col mt-2">
+        <label for="phone" class="form-label">Phone Number</label>
+        <input type="tel" class="form-control" id="phone" name="phone" required>
+    </div>
+    <div class="col mt-2">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password" required>
+    </div>
+    <div class="col mt-2">
+        <label for="confirm_password" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+    </div>
+    <br>
+    <h5 class="text-muted">Car Information</h5>
+    <div class="col mt-2">
+        <label for="vin" class="form-label">VIN Number</label>
+        <input type="text" class="form-control" id="vin" name="vin" required>
+    </div>
+    <div class="col mt-2">
+        <label for="make" class="form-label">Make</label>
+        <input type="text" class="form-control" id="make" name="make" required>
+    </div>
+    <div class="col mt-2">
+        <label for="license_plate" class="form-label">License Plate</label>
+        <input type="text" class="form-control" id="license_plate" name="license_plate" required>
+    </div>
+    <div class="col mt-2">
+        <label for="model" class="form-label">Model</label>
+        <input type="text" class="form-control" id="model" name="model" required>
+    </div>
+    <div class="col mt-2">
+        <label for="color" class="form-label">Color</label>
+        <input type="text" class="form-control" id="color" name="color" required>
+    </div>
+    <div class="col mt-2">
+        <label for="year" class="form-label">Year Bought</label>
+        <input type="text" class="form-control" id="year" name="year" required>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+<p class="mt-3">Already have an account? <a href="/login" class="bn btn-primary">Sign In</a></p>
+{% endblock %}

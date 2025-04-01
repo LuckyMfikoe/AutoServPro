@@ -2,10 +2,11 @@
 {% block title %}
     Home
 {% endblock %}
-{% block content %}
+{% block main %}
     <h1>Welcome To Your Account</h1>
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped table-hover align-middle">
+    <br>
+    <div class="table-responsive container col-5">
+        <table class="table table table-borderless table-hover align-middle max-content-center">
             <tr>
                 <td>Name: </td>
                 <td>{{ firstname }} {{ lastname }}</td>
@@ -24,5 +25,6 @@
             </tr>
         </table>
     </div>
-    <a href="/profile" class="btn btn-primary">Edit Profile</a>
+    <br>
+    <a href="/edit_profile" class="btn btn-primary">Edit Profile</a>
 {% endblock %}
