@@ -156,7 +156,7 @@ def register():
 @app.route("/home") # Displays owner information
 def home():
     """Show owner information"""
-     # Get owner's information from database
+    # Get owner's information from database
     owner_query = db.execute("select firstname, lastName, address, email, phoneNumber from owner where owner_id = ?", session["owner_id"])
     firstname = owner_query[0]["firstname"]
     lastname = owner_query[0]["lastName"]
@@ -165,10 +165,20 @@ def home():
     phone = owner_query[0]["phoneNumber"]
     return render_template("home.html", firstname=firstname, lastname=lastname, address=address, email=email, phone=phone)
 
-@app.route("/owner_cars") # Displays owner's cars -> Empty!!!
 @login_required
+@app.route("/owner_cars") # Displays owner's cars
 def owner_cars():
-    return render_template("owner_cars.html")
+    """Show owner's cars"""
+    # Get owner's cars from database
+    owner_cars_query = db.execute("SELECT car_vin_num, make, licensePlate, model, color, yearModel FROM car WHERE owner_id = ?", session["owner_id"])
+    return render_template("owner_cars.html", records=[{
+        "vin": record["car_vin_num"],
+        "make": record["make"],
+        "license_plate": record["licensePlate"],
+        "model": record["model"],
+        "color": record["color"],
+        "year": record["yearModel"]
+    } for record in owner_cars_query])
 
 @app.route("/car_services") # Displays owner's services -> Empty!!!
 @login_required
@@ -178,8 +188,8 @@ def car_services():
 
 # Update Functions
 @login_required
-@app.route("/update_profile", methods=["GET", "POST"]) # Updates Owner Information -> Incomplete
-def update_profile():
+@app.route("/edit_profile", methods=["GET", "POST"]) # Updates Owner Information -> Incomplete
+def edit_profile():
     """Update owner information"""
     if request.method == "POST":
         firstname = request.form.get("firstname")
@@ -187,14 +197,21 @@ def update_profile():
         address = request.form.get("address")
         email = request.form.get("email")
         phoneNumber = request.form.get("phone")
-        db.execute("UPDATE owner SET firstname = ?, lastName = ?, address = ?, email = ?, phoneNumber = ? WHERE id = ?", firstname, lastName, address, email, phoneNumber, session["owner_id"])
+        db.execute("UPDATE owner SET firstname = ?, lastName = ?, address = ?, email = ?, phoneNumber = ? WHERE owner_id = ?", firstname, lastName, address, email, phoneNumber, session["owner_id"])
         return redirect("/home")
     else:
-        return render_template("update_profile.html")
+        # Get owner's information from database
+        owner_query = db.execute("select firstname, lastName, address, email, phoneNumber from owner where owner_id = ?", session["owner_id"])
+        firstname = owner_query[0]["firstname"]
+        lastname = owner_query[0]["lastName"]
+        address = owner_query[0]["address"]
+        email = owner_query[0]["email"]
+        phone = owner_query[0]["phoneNumber"]
+        return render_template("edit_profile.html", firstname=firstname, lastname=lastname, address=address, email=email, phone=phone)
 
 @login_required
-@app.route("/update_car", methods=["GET", "POST"]) # Updates Car Information -> Incomplete
-def update_car():
+@app.route("/edit_car", methods=["GET", "POST"]) # Updates Car Information -> Incomplete
+def edit_car():
     """Update owner information"""
     if request.method == "POST":
         #firstname = request.form.get("firstname")
@@ -206,6 +223,55 @@ def update_car():
         return redirect("/home")
     else:
         return render_template("update_car.html")
+
+
+# Add Functions
+@login_required
+@app.route("/add_car", methods=["GET", "POST"])# Adds a Car
+def add_car():
+    if request.method == "POST":
+        vin = request.form.get("vin")
+        make = request.form.get("make")
+        license_plate = request.form.get("license_plate")
+        model = request.form.get("model")
+        color = request.form.get("color")
+        year = request.form.get("year")
+
+        # Validate inputs
+        if not all([vin, make, license_plate, model, color, year]):
+            return apology("All fields must be filled", 400)
+        
+        # Try inserting car data into database
+        try:
+            db.execute(
+                """
+                INSERT INTO car (owner_id, car_vin_num, make, licensePlate, model, color, yearModel)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """, 
+                session["owner_id"], vin, make, license_plate, model, color, year
+            )
+            return redirect("/owner_cars")
+        except ValueError:
+            return apology("Car already exists", 400)
+    else:
+        return render_template("add_car.html")
+
+
+# Delete Functions
+@login_required
+@app.route("/delete_car/<vin>", methods=["POST"]) # Deletes a Car
+def delete_car(vin):
+    # Validate input
+    if not vin:
+        return apology("VIN must be provided", 400)
+    
+    # Try deleting car from database
+    try:
+        db.execute("DELETE FROM car WHERE owner_id = ? AND car_vin_num = ?", session["owner_id"], vin)
+        return redirect("/owner_cars")
+    except ValueError:
+        return apology("Car not found", 400)
+
 
 if __name__ == '__main__':
     app.run(debug=True)

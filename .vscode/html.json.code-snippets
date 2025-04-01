@@ -23,7 +23,7 @@
         "{% block title %}",
         "$0",
         "{% endblock %}",
-        "{% block content %}",
+        "{% block main %}",
         "{% endblock %}"
     ],
 

@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block title %}
+    Owner Cars
+{% endblock %}
+{% block main %}
+    <h1>Your Cars</h1>
+    <div class="table-responsive container">
+        <table class="table table-bordered table-hover table-striped align-middle">
+            <thead>
+                <tr>
+                    <th>Vin</th>
+                    <th>Make</th>
+                    <th>License Plate</th>
+                    <th>Model</th>
+                    <th>Color</th>
+                    <th>Year</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for car in records %}
+                    <tr>
+                        <td>{{ car.vin }}</td>
+                        <td>{{ car.make }}</td>
+                        <td>{{ car.license_plate }}</td>
+                        <td>{{ car.model }}</td>
+                        <td>{{ car.color }}</td>
+                        <td>{{ car.year }}</td>
+                        <td>
+                            <a href="/update_car/{{ car.vin }}" class="btn btn-primary">Edit</a>
+                            <form action="delete_car/{{ car.vin }}" method="POST" style="display:inline-block;">
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="/add_car" class="btn btn-primary">Add Car</a>
+{% endblock %}
