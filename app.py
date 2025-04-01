@@ -188,7 +188,7 @@ def car_services():
 
 # Update Functions
 @login_required
-@app.route("/edit_profile", methods=["GET", "POST"]) # Updates Owner Information -> Incomplete
+@app.route("/edit_profile", methods=["GET", "POST"]) # Updates Owner Information
 def edit_profile():
     """Update owner information"""
     if request.method == "POST":
