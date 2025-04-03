@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}
+    Car Services
+{% endblock %}
+{% block main %}
+<div class="container mt-4">
+    <h2>All Car Services</h2>
+
+    {% for vin, services in car_services.items() %}
+    <div class="card my-3">
+        <div class="card-header">
+            <h4>VIN: {{ vin }}</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Date & Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if services %}
+                        {% for service in services %}
+                        <tr>
+                            <td>R{{ service.price }}</td>
+                            <td>{{ service.description }}</td>
+                            <td>{{ service.datetime }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">No services found.</td>
+                        </tr>
+                    {% endif%}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endfor %}
+
+    <a href="/home" class="btn btn-secondary">Back to Home</a>
+</div>
+{% endblock %}

@@ -27,7 +27,7 @@
                         <td>{{ car.color }}</td>
                         <td>{{ car.year }}</td>
                         <td>
-                            <a href="/update_car/{{ car.vin }}" class="btn btn-primary">Edit</a>
+                            <a href="/edit_car/{{ car.vin }}" class="btn btn-primary">Edit</a>
                             <form action="delete_car/{{ car.vin }}" method="POST" style="display:inline-block;">
                                 <button type="submit" class="btn btn-danger">Delete</button>
                             </form>
