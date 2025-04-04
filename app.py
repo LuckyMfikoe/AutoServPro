@@ -120,7 +120,10 @@ def register():
         # Check if passwords match
         if password != confirmation:
             return apology("Passwords don't match", 400)
-
+        
+        if len(car_vin_num) != 13:
+            return apology("VIN must be 13 characters", 400)
+        
         # Generate hash for password
         gen_pass = generate_password_hash(password)
 
@@ -180,10 +183,27 @@ def owner_cars():
         "year": record["yearModel"]
     } for record in owner_cars_query])
 
-@app.route("/car_services") # Displays owner's services -> Empty!!!
 @login_required
+@app.route("/car_services") # Displays owner's services
 def car_services():
-    return render_template("car_services.html")
+    """Display services for all cars categorized by VIN"""
+    cars = db.execute(
+        "SELECT car_vin_num, price, description, datetime FROM service ORDER BY car_vin_num, datetime DESC"
+    )
+    
+    # Organize services by VIN number
+    car_services = {}
+    for car in cars:
+        vin = car["car_vin_num"]
+        if vin not in car_services:
+            car_services[vin] = []
+        car_services[vin].append({
+            "price": car["price"],
+            "description": car["description"],
+            "datetime": car["datetime"]
+        })
+
+    return render_template("car_services.html", car_services=car_services)
 
 
 # Update Functions
@@ -210,19 +230,73 @@ def edit_profile():
         return render_template("edit_profile.html", firstname=firstname, lastname=lastname, address=address, email=email, phone=phone)
 
 @login_required
-@app.route("/edit_car", methods=["GET", "POST"]) # Updates Car Information -> Incomplete
-def edit_car():
+@app.route("/edit_car/<vin>", methods=["GET", "POST"]) # Edit Car Information
+def edit_car(vin):
     """Update owner information"""
     if request.method == "POST":
-        #firstname = request.form.get("firstname")
-        #lastname = request.form.get("lastname")
-        #address = request.form.get("address")
-        #email = request.form.get("email")
-        #phone = request.form.get("phone")
-        #db.execute("UPDATE owner SET firstname = ?, lastname = ?, address = ?, email = ?, phone = ? WHERE id = ?", firstname, lastname, address, email, phone, session["owner_id"])
-        return redirect("/home")
+        vin = request.form.get("vin")
+        make = request.form.get("make")
+        license_plate = request.form.get("license_plate")
+        model = request.form.get("model")
+        color = request.form.get("color")
+        year = request.form.get("year")
+
+        # Validate inputs
+        if not all([vin, make, license_plate, model, color, year]):
+            return apology("All fields must be filled", 400)
+        
+        # Validate VIN length
+        if len(vin) != 13:
+            return apology("VIN must be 13 characters", 400)
+        
+        # Try inserting car data into database
+        try:
+            db.execute(
+                """
+                UPDATE car SET make = ?, licensePlate = ?, model = ?, color = ?, yearModel = ? WHERE owner_id = ? AND car_vin_num = ?
+                """, 
+                make, license_plate, model, color, year, session["owner_id"], vin
+            )
+            return redirect("/owner_cars")
+        except ValueError:
+            return apology("Car not found", 400)
     else:
-        return render_template("update_car.html")
+        car_query = db.execute("SELECT car_vin_num, make, licensePlate, model, color, yearModel FROM car WHERE owner_id = ? and car_vin_num = ?", session["owner_id"], vin)
+        if len(car_query) != 1:
+            return apology("Car not found", 404)
+        car = car_query[0]
+        return render_template("edit_car.html", vin=car["car_vin_num"], make=car["make"], license_plate=car["licensePlate"], model=car["model"], color=car["color"], year=car["yearModel"])
+
+@login_required
+@app.route("/change_password", methods=["GET", "POST"]) # Updates Owner Password
+def change_password():
+    """Change owner password"""
+    if request.method == "POST":
+        # Retrieve current password from database
+        owner_query = db.execute("SELECT password FROM owner WHERE owner_id = ?", session["owner_id"])
+
+        # Ensure query returned a result
+        if not owner_query:
+            return apology("User not found", 400)
+        
+        current_password = owner_query[0]["password"]
+
+        # Verify current password input
+        if check_password_hash(current_password, request.form.get("current_password")):
+            # Validate new password and confirmation
+            if request.form.get("new_password") != request.form.get("confirm_password"):
+                return apology("Passwords don't match", 400)
+            
+            # Generate hash for new password
+            new_pass = generate_password_hash(request.form.get("new_password"))
+            
+            # Update password in database
+            db.execute("UPDATE owner SET password = ? WHERE owner_id = ?", new_pass, session["owner_id"])
+            return redirect("/home")
+        else:
+            return apology("Current password is incorrect", 400)
+    else:
+        return render_template("change_password.html")
 
 
 # Add Functions
@@ -241,6 +315,10 @@ def add_car():
         if not all([vin, make, license_plate, model, color, year]):
             return apology("All fields must be filled", 400)
         
+        # Validate VIN length
+        if len(vin) != 13:
+            return apology("VIN must be 13 characters", 400)
+        
         # Try inserting car data into database
         try:
             db.execute(
@@ -256,6 +334,10 @@ def add_car():
     else:
         return render_template("add_car.html")
 
+@login_required
+@app.route("/schedule", methods=["GET", "POST"]) # Adds a Service -> Incomplete!!!
+def schedule():
+    return render_template("schedule.html")
 
 # Delete Functions
 @login_required

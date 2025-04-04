@@ -1,0 +1,50 @@
+{% extends "layout.html" %}
+{% block title %}
+    Car Services
+{% endblock %}
+{% block main %}
+<h1>All Car Services</h1>
+    <br>
+    {% if car_services %}
+        {% for vin, services in car_services.items() %}
+        <div class="card my-3">
+            <div class="card-header">
+                <h4>VIN: {{ vin }}</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Price</th>
+                            <th>Description</th>
+                            <th>Date & Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if services %}
+                            {% for service in services %}
+                            <tr>
+                                <td>R{{ service.price }}</td>
+                                <td>{{ service.description }}</td>
+                                <td>{{ service.datetime }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center">No services found for this VIN.</td>
+                            </tr>
+                        {% endif%}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            No services found.
+        </div>
+    {% endif %}
+    <br>
+    <a href="/schedule" class="btn btn-primary">Schedule A Service</a>
+    <a href="/home" class="btn btn-secondary">Back to Home</a>
+{% endblock %}
