@@ -183,8 +183,8 @@ def owner_cars():
         "year": record["yearModel"]
     } for record in owner_cars_query])
 
-@app.route("/car_services") # Displays owner's services -> Incomplete!!!
 @login_required
+@app.route("/car_services") # Displays owner's services
 def car_services():
     """Display services for all cars categorized by VIN"""
     cars = db.execute(
@@ -298,6 +298,7 @@ def change_password():
     else:
         return render_template("change_password.html")
 
+
 # Add Functions
 @login_required
 @app.route("/add_car", methods=["GET", "POST"])# Adds a Car
@@ -333,6 +334,10 @@ def add_car():
     else:
         return render_template("add_car.html")
 
+@login_required
+@app.route("/schedule", methods=["GET", "POST"]) # Adds a Service -> Incomplete!!!
+def schedule():
+    return render_template("schedule.html")
 
 # Delete Functions
 @login_required
