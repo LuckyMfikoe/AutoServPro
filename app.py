@@ -198,7 +198,7 @@ def owner_cars():
 def car_services():
     """Display services for all cars categorized by VIN"""
     cars = db.execute(
-        "SELECT car_vin_num, date, time, description, FROM service ORDER BY car_vin_num, datetime DESC"
+        "SELECT car_vin_num, date, time, description, FROM service ORDER BY car_vin_num, time DESC"
     )
     
     # Organize services by VIN number
