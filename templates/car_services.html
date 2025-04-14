@@ -15,18 +15,18 @@
                 <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th>Price</th>
+                            <th>Date</th>
+                            <th>Time</th>
                             <th>Description</th>
-                            <th>Date & Time</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% if services %}
                             {% for service in services %}
                             <tr>
-                                <td>R{{ service.price }}</td>
+                                <td>R{{ service.date }}</td>
+                                <td>{{ service.time }}</td>
                                 <td>{{ service.description }}</td>
-                                <td>{{ service.datetime }}</td>
                             </tr>
                             {% endfor %}
                         {% else %}

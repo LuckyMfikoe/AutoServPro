@@ -70,10 +70,10 @@ def login():
             "SELECT * FROM owner WHERE email = ?", request.form.get("email").strip()
         )
 
-        print("Retrieved row:", rows)
-        if rows:
-            print("Stored hash:", rows[0]["password"])
-            print("Password match?", not check_password_hash(rows[0]["password"], request.form.get("password")))
+        # print("Retrieved row:", rows)
+        # if rows:
+        #    print("Stored hash:", rows[0]["password"])
+        #    print("Password match?", not check_password_hash(rows[0]["password"], request.form.get("password")))
 
         # Ensure email exists and password is correct
         if len(rows) != 1 or check_password_hash(
@@ -198,7 +198,7 @@ def owner_cars():
 def car_services():
     """Display services for all cars categorized by VIN"""
     cars = db.execute(
-        "SELECT car_vin_num, price, description, datetime FROM service ORDER BY car_vin_num, datetime DESC"
+        "SELECT car_vin_num, date, time, description, FROM service ORDER BY car_vin_num, datetime DESC"
     )
     
     # Organize services by VIN number
@@ -208,9 +208,10 @@ def car_services():
         if vin not in car_services:
             car_services[vin] = []
         car_services[vin].append({
-            "price": car["price"],
-            "description": car["description"],
-            "datetime": car["datetime"]
+            "date": car["date"],
+            "time": car["time"],
+            "description": car["description"]
+            
         })
 
     return render_template("car_services.html", car_services=car_services)
