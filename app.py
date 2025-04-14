@@ -64,10 +64,10 @@ def login():
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 403)
-
+        
         # Query database for owner
         rows = db.execute(
-            "SELECT * FROM owner WHERE email = ?", request.form.get("email")
+            "SELECT * FROM owner WHERE email = ?", request.form.get("email").strip()
         )
 
         # Ensure email exists and password is correct
