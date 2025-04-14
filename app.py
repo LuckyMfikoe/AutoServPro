@@ -64,14 +64,19 @@ def login():
         # Ensure password was submitted
         elif not request.form.get("password"):
             return apology("must provide password", 403)
-        
+    
         # Query database for owner
         rows = db.execute(
             "SELECT * FROM owner WHERE email = ?", request.form.get("email").strip()
         )
 
+        print("Retrieved row:", rows)
+        if rows:
+            print("Stored hash:", rows[0]["password"])
+            print("Password match?", not check_password_hash(rows[0]["password"], request.form.get("password")))
+
         # Ensure email exists and password is correct
-        if len(rows) != 1 or not check_password_hash(
+        if len(rows) != 1 or check_password_hash(
             rows[0]["password"], request.form.get("password")
         ):
             return apology("invalid email and/or password", 403)
