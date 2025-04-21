@@ -18,8 +18,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Configure MySQL database
-db = SQL("mysql://sql8772963:sJH6JBf3a5@sql8.freesqldatabase.com/sql8772963")
-# db = SQL("sqlite:///autoservpro.db")
+# db = SQL("mysql://sql8772963:sJH6JBf3a5@sql8.freesqldatabase.com/sql8772963")
+db = SQL("sqlite:///autoservpro.db")
 
 @app.after_request
 def after_request(response):
